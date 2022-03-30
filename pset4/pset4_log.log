@@ -1,0 +1,430 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\condo\OneDrive\Documents\School\ECO 348K\pset4\pset4_log.log
+  log type:  text
+ opened on:  25 Mar 2022, 21:21:07
+
+. 
+. *** Q1
+.         
+.         use "$pset4\ClassSizeRKD.dta", clear
+
+.         
+.         * a)
+.         
+.         /*
+>         See handwritten notes
+>         */
+.         
+.         * b)
+.         
+.         /*
+>         See handwritten notes
+>         */
+.         
+.         * c)
+.         
+.         /*
+>         See handwritten notes
+>         */
+.         
+.         * d)
+.         
+.         preserve
+
+.         drop if cohsize>80
+(1,732 observations deleted)
+
+.         
+.         gen center40=cohsize-40
+
+.         
+.         gen above40 = 1 if cohsize>40
+(592 missing values generated)
+
+.         replace above40 = 0 if above40==.
+(592 real changes made)
+
+.         
+.         reg num_classrooms above40##c.center40 if abs(center40)<=40, cl(coh_id)
+
+Linear regression                               Number of obs     =      2,345
+                                                F(3, 1462)        =    2187.26
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.6233
+                                                Root MSE          =     .39534
+
+                                   (Std. err. adjusted for 1,463 clusters in coh_id)
+------------------------------------------------------------------------------------
+                   |               Robust
+    num_classrooms | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------+----------------------------------------------------------------
+         1.above40 |    .563674   .0483093    11.67   0.000     .4689111    .6584369
+          center40 |   .0167792   .0021626     7.76   0.000      .012537    .0210214
+                   |
+above40#c.center40 |
+                1  |  -.0017382   .0025412    -0.68   0.494     -.006723    .0032466
+                   |
+             _cons |   1.360374   .0432828    31.43   0.000     1.275471    1.445277
+------------------------------------------------------------------------------------
+
+.         
+.         /*
+>         "1.above40" is the discontinuity magnitude
+>         "center40" is the slope of the line before/after the cutoff
+>         "above40#c.center40" is the change in slope after the cutoff
+>         */
+.         
+.         * e)
+.         
+.         reg avgscore above40##c.center40 if abs(center40)<=40, cl(coh_id)
+
+Linear regression                               Number of obs     =      2,341
+                                                F(3, 1458)        =      12.27
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0228
+                                                Root MSE          =     8.5277
+
+                                   (Std. err. adjusted for 1,459 clusters in coh_id)
+------------------------------------------------------------------------------------
+                   |               Robust
+          avgscore | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------+----------------------------------------------------------------
+         1.above40 |   2.807269   1.028758     2.73   0.006     .7892644    4.825273
+          center40 |  -.1580076   .0535098    -2.95   0.003    -.2629721   -.0530432
+                   |
+above40#c.center40 |
+                1  |   .2298285   .0581441     3.95   0.000     .1157734    .3438835
+                   |
+             _cons |   65.77338   .8725171    75.38   0.000     64.06185     67.4849
+------------------------------------------------------------------------------------
+
+.         
+.                 * i)
+.                 
+.                 /*
+>                 Both discontinuities are positive and statistically significant. The slope
+>                 change after the cutoff is also positive and statistically significant for
+>                 the scores regression, but isn't statistically significant in the regression
+>                 on number of classes. The combined effect at the cutoff is likely to be
+>                 positive, as described in the notes for c). The number of classes does not 
+>                 appear to have an effect on the slope.
+>                 */
+.         
+.                 * ii)
+.                 
+.                 /*
+>                 Class size alone has a negative correlation with scores, since we can observe
+>                 the combined improvement effect when class size and no. classrooms change
+>                 at the discontinuity. We can also observe the negative relationship between class
+>                 size and test scores overall, and the positive change in the correlation coefficient
+>                 of cohort size and scores post-discontinuity where the decreasing correlation magnitude
+>                 between cohort size and class size causes increases in cohort size to become less 
+>                 correlated with poor outcomes.
+>                 */
+.                 
+. *** Q2
+.         
+.         use "$pset4\SpeedDiscount.dta", clear
+
+.         
+.         * a)
+.         
+.         gen whitelenient = (white * lenient)
+
+.         
+.         areg discount white lenient whitelenient i.year, a(countynum) r
+
+Linear regression, absorbing indicators            Number of obs     = 212,426
+Absorbed variable: countynum                       No. of categories =      67
+                                                   F(13, 212346)     = 3144.48
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.3053
+                                                   Adj R-squared     =  0.3051
+                                                   Root MSE          =  0.3870
+
+------------------------------------------------------------------------------
+             |               Robust
+    discount | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |  -.0074219   .0010037    -7.39   0.000    -.0093892   -.0054546
+     lenient |   .3058217   .0023932   127.79   0.000     .3011311    .3105124
+whitelenient |   .0660304   .0026972    24.48   0.000     .0607438    .0713169
+             |
+        year |
+       2006  |   -.005238   .0052095    -1.01   0.315    -.0154485    .0049725
+       2007  |   .0145697   .0048969     2.98   0.003     .0049719    .0241675
+       2008  |   .0545726   .0048861    11.17   0.000     .0449959    .0641492
+       2009  |   .1029983   .0048907    21.06   0.000     .0934126     .112584
+       2010  |   .1160071   .0049649    23.37   0.000     .1062761    .1257382
+       2011  |    .137938   .0048676    28.34   0.000     .1283976    .1474784
+       2012  |   .1458465   .0048979    29.78   0.000     .1362467    .1554462
+       2013  |   .1200621   .0048725    24.64   0.000     .1105121     .129612
+       2014  |    .107953   .0047892    22.54   0.000     .0985663    .1173397
+       2015  |   .1198193   .0048793    24.56   0.000      .110256    .1293826
+             |
+       _cons |  -.0092263   .0041614    -2.22   0.027    -.0173825   -.0010701
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         The interaction term is the change in discount rate when the driver was white AND the
+>         officer was lenient. We can observe that the lenient officers are more likely to
+>         discount a white driver, and thus there is racial bias in traffic policing within 
+>         the sample. 
+>         */
+.         
+.         * b)
+. 
+.         gen femalelenient = (female * lenient)
+
+.         gen agelenient = (age * lenient)
+
+.         gen above25klenient = (above25k * lenient)
+
+.         gen anytixlenient = (anytix * lenient)
+
+.         gen instatelenient = (instate * lenient)
+
+.         
+.         areg discount female lenient femalelenient i.year, a(countynum) r
+
+Linear regression, absorbing indicators            Number of obs     = 212,426
+Absorbed variable: countynum                       No. of categories =      67
+                                                   F(13, 212346)     = 3078.67
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.3038
+                                                   Adj R-squared     =  0.3035
+                                                   Root MSE          =  0.3874
+
+-------------------------------------------------------------------------------
+              |               Robust
+     discount | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+--------------+----------------------------------------------------------------
+       female |  -.0021383   .0009406    -2.27   0.023    -.0039819   -.0002948
+      lenient |   .3309918   .0020429   162.02   0.000     .3269878    .3349957
+femalelenient |   .0374412   .0026865    13.94   0.000     .0321757    .0427067
+              |
+         year |
+        2006  |  -.0052819   .0052113    -1.01   0.311     -.015496    .0049321
+        2007  |    .014327   .0049009     2.92   0.003     .0047213    .0239327
+        2008  |    .053267   .0048899    10.89   0.000     .0436829    .0628511
+        2009  |   .1012185   .0048919    20.69   0.000     .0916306    .1108065
+        2010  |   .1140562     .00497    22.95   0.000     .1043151    .1237972
+        2011  |    .135694   .0048716    27.85   0.000     .1261459    .1452422
+        2012  |    .143748   .0049034    29.32   0.000     .1341375    .1533586
+        2013  |   .1185028   .0048774    24.30   0.000     .1089432    .1280624
+        2014  |   .1063239   .0047939    22.18   0.000      .096928    .1157198
+        2015  |   .1168637   .0048824    23.94   0.000     .1072943    .1264331
+              |
+        _cons |  -.0102313   .0040908    -2.50   0.012    -.0182491   -.0022136
+-------------------------------------------------------------------------------
+
+.         areg discount age lenient agelenient i.year, a(countynum) r
+
+Linear regression, absorbing indicators            Number of obs     = 212,426
+Absorbed variable: countynum                       No. of categories =      67
+                                                   F(13, 212346)     = 3110.95
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.3060
+                                                   Adj R-squared     =  0.3057
+                                                   Root MSE          =  0.3868
+
+------------------------------------------------------------------------------
+             |               Robust
+    discount | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         age |   4.42e-06   .0000322     0.14   0.891    -.0000587    .0000675
+     lenient |   .2629824   .0037877    69.43   0.000     .2555585    .2704062
+  agelenient |   .0022352    .000092    24.29   0.000     .0020549    .0024156
+             |
+        year |
+       2006  |  -.0052083   .0051968    -1.00   0.316    -.0153939    .0049773
+       2007  |   .0136888   .0048871     2.80   0.005     .0041103    .0232673
+       2008  |   .0517333   .0048766    10.61   0.000     .0421754    .0612913
+       2009  |   .1001614   .0048805    20.52   0.000     .0905957    .1097271
+       2010  |    .113031   .0049572    22.80   0.000      .103315    .1227471
+       2011  |   .1337357   .0048616    27.51   0.000     .1242071    .1432642
+       2012  |   .1411178   .0048948    28.83   0.000     .1315242    .1507114
+       2013  |   .1152164   .0048683    23.67   0.000     .1056746    .1247582
+       2014  |   .1034017   .0047845    21.61   0.000     .0940242    .1127791
+       2015  |   .1152347   .0048711    23.66   0.000     .1056875    .1247819
+             |
+       _cons |  -.0089022   .0041795    -2.13   0.033     -.017094   -.0007105
+------------------------------------------------------------------------------
+
+.         areg discount above25k lenient above25klenient i.year, a(countynum) r
+
+Linear regression, absorbing indicators            Number of obs     = 212,426
+Absorbed variable: countynum                       No. of categories =      67
+                                                   F(13, 212346)     = 3070.01
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.3032
+                                                   Adj R-squared     =  0.3029
+                                                   Root MSE          =  0.3876
+
+---------------------------------------------------------------------------------
+                |               Robust
+       discount | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+       above25k |   .0044262   .0013059     3.39   0.001     .0018666    .0069857
+        lenient |   .3493703   .0018978   184.09   0.000     .3456506      .35309
+above25klenient |   -.033177   .0034986    -9.48   0.000    -.0400341   -.0263199
+                |
+           year |
+          2006  |  -.0050644   .0052169    -0.97   0.332    -.0152894    .0051606
+          2007  |    .014212   .0049056     2.90   0.004     .0045971    .0238269
+          2008  |   .0528844   .0048929    10.81   0.000     .0432944    .0624744
+          2009  |   .1009039   .0048959    20.61   0.000      .091308    .1104998
+          2010  |   .1143635   .0049729    23.00   0.000     .1046168    .1241102
+          2011  |   .1358011   .0048747    27.86   0.000     .1262469    .1453553
+          2012  |   .1443191   .0049064    29.41   0.000     .1347026    .1539356
+          2013  |   .1196802   .0048803    24.52   0.000      .110115    .1292454
+          2014  |    .108019   .0047958    22.52   0.000     .0986194    .1174186
+          2015  |   .1184314   .0048859    24.24   0.000     .1088551    .1280077
+                |
+          _cons |   -.011414   .0040944    -2.79   0.005    -.0194388   -.0033892
+---------------------------------------------------------------------------------
+
+.         areg discount anytix lenient anytixlenient i.year, a(countynum) r
+
+Linear regression, absorbing indicators            Number of obs     = 212,426
+Absorbed variable: countynum                       No. of categories =      67
+                                                   F(13, 212346)     = 3094.52
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.3041
+                                                   Adj R-squared     =  0.3039
+                                                   Root MSE          =  0.3873
+
+-------------------------------------------------------------------------------
+              |               Robust
+     discount | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+--------------+----------------------------------------------------------------
+       anytix |   .0033558   .0009281     3.62   0.000     .0015367    .0051748
+      lenient |   .3596555   .0020218   177.89   0.000     .3556927    .3636182
+anytixlenient |  -.0480595   .0028457   -16.89   0.000     -.053637    -.042482
+              |
+         year |
+        2006  |  -.0014968   .0052249    -0.29   0.775    -.0117376    .0087439
+        2007  |   .0179869   .0049133     3.66   0.000      .008357    .0276169
+        2008  |   .0566944   .0049019    11.57   0.000     .0470868     .066302
+        2009  |    .104579   .0049012    21.34   0.000     .0949729    .1141852
+        2010  |   .1176528   .0049775    23.64   0.000      .107897    .1274085
+        2011  |   .1386148   .0048795    28.41   0.000     .1290512    .1481784
+        2012  |   .1462266   .0049105    29.78   0.000     .1366022     .155851
+        2013  |   .1208739   .0048829    24.75   0.000     .1113036    .1304442
+        2014  |   .1083688   .0047986    22.58   0.000     .0989638    .1177739
+        2015  |   .1189965   .0048878    24.35   0.000     .1094165    .1285766
+              |
+        _cons |  -.0153494    .004068    -3.77   0.000    -.0233226   -.0073761
+-------------------------------------------------------------------------------
+
+.         areg discount instate lenient instatelenient i.year, a(countynum) r
+
+Linear regression, absorbing indicators            Number of obs     = 212,426
+Absorbed variable: countynum                       No. of categories =      67
+                                                   F(13, 212346)     = 3148.67
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.3030
+                                                   Adj R-squared     =  0.3027
+                                                   Root MSE          =  0.3876
+
+--------------------------------------------------------------------------------
+               |               Robust
+      discount | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------+----------------------------------------------------------------
+       instate |   .0263799   .0019211    13.73   0.000     .0226145    .0301452
+       lenient |   .3572397   .0035662   100.17   0.000     .3502501    .3642293
+instatelenient |   -.014799   .0036622    -4.04   0.000    -.0219769   -.0076211
+               |
+          year |
+         2006  |  -.0066488   .0052279    -1.27   0.203    -.0168954    .0035979
+         2007  |   .0128317    .004919     2.61   0.009     .0031905    .0224729
+         2008  |   .0518499   .0049057    10.57   0.000     .0422348    .0614649
+         2009  |   .1002232   .0049085    20.42   0.000     .0906026    .1098438
+         2010  |   .1132891   .0049851    22.73   0.000     .1035183    .1230598
+         2011  |   .1351558   .0048869    27.66   0.000     .1255776     .144734
+         2012  |   .1431252   .0049183    29.10   0.000     .1334854    .1527649
+         2013  |   .1180136   .0048911    24.13   0.000     .1084271       .1276
+         2014  |   .1060643   .0048078    22.06   0.000     .0966412    .1154875
+         2015  |   .1164408   .0048972    23.78   0.000     .1068423    .1260392
+               |
+         _cons |  -.0324676   .0041623    -7.80   0.000    -.0406257   -.0243095
+--------------------------------------------------------------------------------
+
+.         areg discount blackmale blackfemale hispmale hispfemale whitefemale lenient lenient##c.blackmale lenient##c.blackfemale lenient##c.hispmale lenient##c.hispfemale leni
+> ent##c.whitefemale i.year, a(countynum) r
+note: 1.lenient omitted because of collinearity.
+note: blackmale omitted because of collinearity.
+note: blackfemale omitted because of collinearity.
+note: hispmale omitted because of collinearity.
+note: hispfemale omitted because of collinearity.
+note: whitefemale omitted because of collinearity.
+
+Linear regression, absorbing indicators            Number of obs     = 212,426
+Absorbed variable: countynum                       No. of categories =      67
+                                                   F(21, 212338)     = 1989.56
+                                                   Prob > F          =  0.0000
+                                                   R-squared         =  0.3067
+                                                   Adj R-squared     =  0.3064
+                                                   Root MSE          =  0.3866
+
+---------------------------------------------------------------------------------------
+                      |               Robust
+             discount | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------------+----------------------------------------------------------------
+            blackmale |  -.0025638   .0016167    -1.59   0.113    -.0057324    .0006049
+          blackfemale |  -.0044484   .0020653    -2.15   0.031    -.0084963   -.0004005
+             hispmale |   .0126903   .0012522    10.13   0.000      .010236    .0151446
+           hispfemale |   .0105387    .001515     6.96   0.000     .0075694     .013508
+          whitefemale |  -.0004593   .0013622    -0.34   0.736    -.0031292    .0022106
+              lenient |   .3619704   .0024753   146.23   0.000     .3571189    .3668219
+            1.lenient |          0  (omitted)
+            blackmale |          0  (omitted)
+                      |
+  lenient#c.blackmale |
+                   1  |  -.0352685   .0045542    -7.74   0.000    -.0441947   -.0263423
+                      |
+          blackfemale |          0  (omitted)
+                      |
+lenient#c.blackfemale |
+                   1  |  -.0093435   .0051483    -1.81   0.070     -.019434     .000747
+                      |
+             hispmale |          0  (omitted)
+                      |
+   lenient#c.hispmale |
+                   1  |  -.0969734    .004015   -24.15   0.000    -.1048427    -.089104
+                      |
+           hispfemale |          0  (omitted)
+                      |
+ lenient#c.hispfemale |
+                   1  |  -.0400453   .0054946    -7.29   0.000    -.0508145    -.029276
+                      |
+          whitefemale |          0  (omitted)
+                      |
+lenient#c.whitefemale |
+                   1  |   .0314187   .0034792     9.03   0.000     .0245997    .0382378
+                      |
+                 year |
+                2006  |  -.0055751   .0052017    -1.07   0.284    -.0157702    .0046201
+                2007  |   .0141148   .0048904     2.89   0.004     .0045296    .0236999
+                2008  |   .0542868   .0048806    11.12   0.000     .0447209    .0638526
+                2009  |   .1025155   .0048845    20.99   0.000     .0929419     .112089
+                2010  |   .1150745   .0049602    23.20   0.000     .1053527    .1247963
+                2011  |   .1369085   .0048627    28.15   0.000     .1273778    .1464393
+                2012  |   .1446561    .004894    29.56   0.000     .1350639    .1542483
+                2013  |   .1184564   .0048681    24.33   0.000     .1089151    .1279977
+                2014  |   .1057943   .0047859    22.11   0.000     .0964142    .1151745
+                2015  |   .1179911   .0048752    24.20   0.000     .1084358    .1275465
+                      |
+                _cons |  -.0165029    .004093    -4.03   0.000     -.024525   -.0084808
+---------------------------------------------------------------------------------------
+
+.         
+.         /*
+>         
+>         */
+. 
+end of do-file
+
+. exit, clear

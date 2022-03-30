@@ -1,0 +1,682 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\condo\OneDrive\Documents\School\ECO 348K\pset3\pset3_log.log
+  log type:  text
+ opened on:   5 Mar 2022, 20:50:47
+
+. 
+. *** Q1
+.         
+.         use "$pset3\VisibleHand.dta", clear
+
+.         *reg y x [w = stateweight], r
+.         
+.         * a)
+.         
+.         /* 
+>         highquality = Advertisement quality, "low" or "high"
+>         holiday = Gift holiday, binary for if the transaction was near Christmas/Valentine's
+>         ipodtype = current or outdated, and generation
+>         price = asking price, 90 110 or 130
+>         night = post time, day or night
+>         */
+.         
+.         * b) 
+.         
+.         mean(highquality) if white == 1
+
+Mean estimation                            Number of obs = 439
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+ highquality |   .5102506   .0238859      .4633053    .5571958
+--------------------------------------------------------------
+
+.         mean(highquality) if white == 0
+
+Mean estimation                            Number of obs = 432
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+ highquality |   .4976852   .0240839      .4503487    .5450217
+--------------------------------------------------------------
+
+.                 
+.         mean(holiday) if white == 1
+
+Mean estimation                            Number of obs = 439
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+     holiday |   .1002278   .0143491      .0720262    .1284294
+--------------------------------------------------------------
+
+.         mean(holiday) if white == 0
+
+Mean estimation                            Number of obs = 432
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+     holiday |   .0925926   .0139621      .0651503    .1200349
+--------------------------------------------------------------
+
+.         
+.         mean(ipodtype) if white == 1
+
+Mean estimation                            Number of obs = 439
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+    ipodtype |   .6833713   .0436875      .5975082    .7692344
+--------------------------------------------------------------
+
+.         mean(ipodtype) if white == 0
+
+Mean estimation                            Number of obs = 432
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+    ipodtype |   .6064815   .0422968      .5233477    .6896152
+--------------------------------------------------------------
+
+.         
+.         mean(price) if white == 1 
+
+Mean estimation                            Number of obs = 439
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+       price |   107.3576   .7387382      105.9057    108.8095
+--------------------------------------------------------------
+
+.         mean(price) if white == 0 
+
+Mean estimation                            Number of obs = 432
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+       price |   108.0093   .7682358      106.4993    109.5192
+--------------------------------------------------------------
+
+.         
+.         mean(night) if white == 1
+
+Mean estimation                            Number of obs = 439
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+       night |   .4328018   .0236742      .3862727    .4793309
+--------------------------------------------------------------
+
+.         mean(night) if white == 0
+
+Mean estimation                            Number of obs = 432
+
+--------------------------------------------------------------
+             |       Mean   Std. err.     [95% conf. interval]
+-------------+------------------------------------------------
+       night |   .4282407   .0238348      .3813938    .4750877
+--------------------------------------------------------------
+
+.         
+.         *gen typebinary = .
+.         *replace typebinary = 1 if ipodtype == "5th gen.\ (current)"
+.         
+.         /*
+>         Based on the provided confidence intervals at p = .95, none of the conditional means 
+>         are verifiably different from one another. The conditional means of each variable fall
+>         within the confidence interval of the opposite condition and vice versa. This is good because
+>         it means our regression analysis won't suffer from collinearity between our outcome variables 
+>         and dependent variable, whiteness.
+>         */
+.         
+.         * c)
+.         
+.         /*
+>         reponses = number of responses to post
+>         anyoffer = was there an offer in response to the post?
+>         bestoffer = what was the highest offered price in response to the post?
+>         */
+.         
+.         reg responses white
+
+      Source |       SS           df       MS      Number of obs   =       871
+-------------+----------------------------------   F(1, 869)       =      2.39
+       Model |  17.8820248         1  17.8820248   Prob > F        =    0.1222
+    Residual |  6491.07779       869   7.4695947   R-squared       =    0.0027
+-------------+----------------------------------   Adj R-squared   =    0.0016
+       Total |  6508.95982       870  7.48156301   Root MSE        =    2.7331
+
+------------------------------------------------------------------------------
+   responses | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |   .2865783   .1852181     1.55   0.122    -.0769489    .6501054
+       _cons |   2.456019   .1314942    18.68   0.000     2.197935    2.714102
+------------------------------------------------------------------------------
+
+.         reg anyoffer white
+
+      Source |       SS           df       MS      Number of obs   =       871
+-------------+----------------------------------   F(1, 869)       =      0.79
+       Model |  .194694137         1  .194694137   Prob > F        =    0.3736
+    Residual |  213.490725       869  .245674022   R-squared       =    0.0009
+-------------+----------------------------------   Adj R-squared   =   -0.0002
+       Total |  213.685419       870  .245615424   Root MSE        =    .49566
+
+------------------------------------------------------------------------------
+    anyoffer | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |   .0299028   .0335904     0.89   0.374    -.0360249    .0958305
+       _cons |   .5532407   .0238472    23.20   0.000     .5064359    .6000456
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         The coefficient values in the above regressions are not significant at p = .95
+>         */
+.         
+.         * d)
+.         
+.         /*
+>         Selection bias should be approximately equal to zero, since the samples for both
+>         treated and untreated populations are roughly equal in all other characteristics.
+>         */
+.         
+.         * e) 
+.         
+.         sum bestoffer
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   bestoffer |        495    92.19798    16.47404         35        160
+
+.         reg bestoffer white
+
+      Source |       SS           df       MS      Number of obs   =       495
+-------------+----------------------------------   F(1, 493)       =      4.11
+       Model |  1109.46865         1  1109.46865   Prob > F        =    0.0431
+    Residual |  132959.129       493  269.693974   R-squared       =    0.0083
+-------------+----------------------------------   Adj R-squared   =    0.0063
+       Total |  134068.598       494  271.393923   Root MSE        =    16.422
+
+------------------------------------------------------------------------------
+   bestoffer | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |   2.995996   1.477132     2.03   0.043     .0937453    5.898246
+       _cons |   90.64854   1.062274    85.33   0.000     88.56139    92.73568
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         The ATE of whiteness in the model is 2.995, significant at p = .95. Relative to the mean 
+>         value of bestoffer, this is roughly a ~4% increase in offer price compared to the untreated.
+>         
+>         The sample is smaller because not all listings received offers, and Stata omits NA values for
+>         the target IV automatically.
+>         */
+.         
+.         * f) 
+.         
+.         gen newvar = bestoffer
+(376 missing values generated)
+
+.         replace newvar = 0 if newvar == .
+(376 real changes made)
+
+.         
+.         reg newvar white
+
+      Source |       SS           df       MS      Number of obs   =       871
+-------------+----------------------------------   F(1, 869)       =      1.93
+       Model |    4326.723         1    4326.723   Prob > F        =    0.1649
+    Residual |  1946167.83       869  2239.54871   R-squared       =    0.0022
+-------------+----------------------------------   Adj R-squared   =    0.0011
+       Total |  1950494.55       870  2241.94776   Root MSE        =    47.324
+
+------------------------------------------------------------------------------
+      newvar | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |   4.457737    3.20712     1.39   0.165    -1.836869    10.75234
+       _cons |   50.15046   2.276871    22.03   0.000     45.68165    54.61927
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         The coefficient is now larger - including some of the variation we previously captured in the 
+>         regressions in c). Unfortunately, it is also no longer signficant at p = .95.
+>         */
+.         
+.         * g)
+.         
+.         preserve
+
+.         
+.         drop if highquality == 1
+(439 observations deleted)
+
+.         reg newvar white
+
+      Source |       SS           df       MS      Number of obs   =       432
+-------------+----------------------------------   F(1, 430)       =      0.01
+       Model |  24.6711182         1  24.6711182   Prob > F        =    0.9159
+    Residual |  949570.308       430  2208.30304   R-squared       =    0.0000
+-------------+----------------------------------   Adj R-squared   =   -0.0023
+       Total |  949594.979       431  2203.23661   Root MSE        =    46.993
+
+------------------------------------------------------------------------------
+      newvar | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |  -.4779552   4.521912    -0.11   0.916    -9.365756    8.409846
+       _cons |   52.11982   3.190065    16.34   0.000     45.84976    58.38988
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve 
+
+.         
+.         drop if highquality == 0 
+(432 observations deleted)
+
+.         reg newvar white
+
+      Source |       SS           df       MS      Number of obs   =       439
+-------------+----------------------------------   F(1, 437)       =      4.18
+       Model |  9473.12588         1  9473.12588   Prob > F        =    0.0416
+    Residual |  991198.856       437   2268.1896   R-squared       =    0.0095
+-------------+----------------------------------   Adj R-squared   =    0.0072
+       Total |  1000671.98       438  2284.63923   Root MSE        =    47.626
+
+------------------------------------------------------------------------------
+      newvar | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |   9.292566   4.547039     2.04   0.042     .3557823    18.22935
+       _cons |   48.16279   3.248033    14.83   0.000     41.77908     54.5465
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         reg newvar white highquality
+
+      Source |       SS           df       MS      Number of obs   =       871
+-------------+----------------------------------   F(2, 868)       =      1.01
+       Model |  4530.09255         2  2265.04627   Prob > F        =    0.3645
+    Residual |  1945964.46       868  2241.89454   R-squared       =    0.0023
+-------------+----------------------------------   Adj R-squared   =    0.0000
+       Total |  1950494.55       870  2241.94776   Root MSE        =    47.349
+
+------------------------------------------------------------------------------
+      newvar | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       white |   4.445593   3.209052     1.39   0.166    -1.852817      10.744
+ highquality |    .966523   3.209052     0.30   0.763    -5.331887    7.264933
+       _cons |   49.66944   2.782138    17.85   0.000     44.20893    55.12994
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         The first regression didn't return statistically significant results, but the 
+>         regression containing only the high quality sample showed a much higher ATE than any previous
+>         regression with statistical signficance at p = .95. 
+>         
+>         Neither variable was statistically signficant in the third regression, but the estimated ATEs 
+>         showed a sizeable positive effect from both whiteness and listing quality. Whiteness had a larger
+>         effect by a factor of five. 
+>         */
+.         
+.         * h)
+.         
+.         /*
+>         Looking at the results from d) through g), I would feel reasonably confident stating that 
+>         in the sample there was a positive impact of whiteness on the selling price.
+>         
+>         This difference was especially large when the listing was already a "high quality" advertisement. 
+>         */
+.         
+. *** Q2
+. 
+.         use "$pset3\ClassSizeRD.dta", clear
+
+.         
+.         * a)
+.         
+.         /*
+>         ``Twenty-five children may be put in charge of one teacher. If the number in
+>         the class exceeds twenty-five but is not more than forty, he should
+>         have an assistant to help with the instruction. If there are more
+>         than forty, two teachers must be appointed''
+>         */
+.         
+.         * b)
+.         
+.         /*
+>         M's rule is a source of exogenous variation in class size that is not collinear
+>         with other variables in the data. The running variable is enrollment cohorts,
+>         and class size as governed by M's rule is discontinuous across enrollment cohort size.
+>         Test scores are the outcome variable.
+>         */
+.         
+.         * c) 
+.         
+.         scatter classize cohsize, xline(40 80 120 160)
+
+.         
+.         /*
+>         Class size is discontinuous with cohort size according to Ms rule.
+>         */
+.         
+.         * d)
+.         
+.         gen center40=cohsize-40
+
+.         
+.         gen above40 = 1 if cohsize>40
+(592 missing values generated)
+
+.         replace above40 = 0 if above40==.
+(592 real changes made)
+
+.         
+.         gen above80 = 1 if cohsize>80
+(2,345 missing values generated)
+
+.         replace above40 = 0 if above40==.
+(0 real changes made)
+
+.         
+.         *bandwidth 20
+.         preserve
+
+.         drop if cohsize>60
+(2,596 observations deleted)
+
+.         drop if cohsize<20
+(129 observations deleted)
+
+.         reg classize above40
+
+      Source |       SS           df       MS      Number of obs   =     1,352
+-------------+----------------------------------   F(1, 1350)      =     18.45
+       Model |  455.110393         1  455.110393   Prob > F        =    0.0000
+    Residual |  33307.4865     1,350  24.6722122   R-squared       =    0.0135
+-------------+----------------------------------   Adj R-squared   =    0.0127
+       Total |  33762.5969     1,351  24.9908193   Root MSE        =    4.9671
+
+------------------------------------------------------------------------------
+    classize | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     above40 |  -1.222659   .2846761    -4.29   0.000    -1.781115   -.6642034
+       _cons |   26.59611   .2308413   115.21   0.000     26.14327    27.04896
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve
+
+.         drop if cohsize>100
+(1,030 observations deleted)
+
+.         drop if cohsize<60
+(1,432 observations deleted)
+
+.         reg classize above80
+note: above80 omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =       702
+-------------+----------------------------------   F(0, 701)       =      0.00
+       Model |           0         0           .   Prob > F        =         .
+    Residual |  13444.7179       701  19.1793409   R-squared       =    0.0000
+-------------+----------------------------------   Adj R-squared   =    0.0000
+       Total |  13444.7179       701  19.1793409   Root MSE        =    4.3794
+
+------------------------------------------------------------------------------
+    classize | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     above80 |          0  (omitted)
+       _cons |   30.95726   .1652906   187.29   0.000     30.63274    31.28179
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         *bandwidth 30
+.         preserve
+
+.         drop if cohsize>70
+(2,154 observations deleted)
+
+.         drop if cohsize<10
+(7 observations deleted)
+
+.         reg classize above40
+
+      Source |       SS           df       MS      Number of obs   =     1,916
+-------------+----------------------------------   F(1, 1914)      =    116.29
+       Model |  3783.02442         1  3783.02442   Prob > F        =    0.0000
+    Residual |  62265.1175     1,914  32.5314094   R-squared       =    0.0573
+-------------+----------------------------------   Adj R-squared   =    0.0568
+       Total |   66048.142     1,915  34.4898914   Root MSE        =    5.7036
+
+------------------------------------------------------------------------------
+    classize | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     above40 |   3.051057   .2829321    10.78   0.000      2.49617    3.605945
+       _cons |   24.34188   .2358161   103.22   0.000      23.8794    24.80436
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve
+
+.         drop if cohsize>110
+(784 observations deleted)
+
+.         drop if cohsize<50
+(991 observations deleted)
+
+.         reg classize above80
+note: above80 omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =       948
+-------------+----------------------------------   F(0, 947)       =      0.00
+       Model |           0         0           .   Prob > F        =         .
+    Residual |  19589.7078       947  20.6860695   R-squared       =    0.0000
+-------------+----------------------------------   Adj R-squared   =    0.0000
+       Total |  19589.7078       947  20.6860695   Root MSE        =    4.5482
+
+------------------------------------------------------------------------------
+    classize | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     above80 |          0  (omitted)
+       _cons |   31.53692   .1477185   213.49   0.000     31.24703    31.82681
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         /* 
+>         Stata dropped above40/above80 from the regression because of collinearity?
+>         */
+.         
+.         * e)
+.         
+.         drop if cohsize>80
+(1,732 observations deleted)
+
+.         
+.         /*
+>         From the paper:
+>         "To see how this variation comes about, note that according to Maimonides' rule, class size
+>         increases one-for-one with enrollment until 40 pupils are enrolled,
+>         but when 41 students are enrolled, there will be a sharp drop in
+>         class size, to an average of 20.5 pupils. Similarly, when 80 pupils
+>         are enrolled, the average class size will again be 40, but when 81
+>         pupils are enrolled the average class size drops to 27"
+>         */
+.         
+.         * f)
+.         
+.         scatter tipuach cohsize, xline(40)
+
+.         
+.         /*
+>         Looks continuous across cohort size at 40. This is beneficial, since we won't be getting 
+>         inteference from endogenous collinear variables in our models.
+>         */
+.         
+.         * g)
+.         preserve
+
+.         g count=1
+
+.         collapse (sum) count, by(cohsize)
+
+.         
+.         scatter count cohsize, xline(40)
+
+.         
+.         /*
+>         Count IS discontinuous at 40. I've been wondering this whole time if administrators would
+>         pack students into classrooms just under the dividing threshold to keep class sizes larger and
+>         reduce cost. The opposite seems to be true. I can't think of a reason this would necessarily be 
+>         bad if everything else is accounted for, but it does raise an eyebrow. 
+>         */
+.         
+.         * h) 
+.         
+.         restore
+
+.         preserve
+
+.         drop if cohsize>80
+(0 observations deleted)
+
+.         reg avgscore classize
+
+      Source |       SS           df       MS      Number of obs   =     2,341
+-------------+----------------------------------   F(1, 2339)      =     37.84
+       Model |  2768.89481         1  2768.89481   Prob > F        =    0.0000
+    Residual |  171146.129     2,339   73.170641   R-squared       =    0.0159
+-------------+----------------------------------   Adj R-squared   =    0.0155
+       Total |  173915.024     2,340  74.3226598   Root MSE        =     8.554
+
+------------------------------------------------------------------------------
+    avgscore | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    classize |   .1681861   .0273404     6.15   0.000     .1145721    .2218001
+       _cons |   64.86161     .77906    83.26   0.000     63.33389    66.38933
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve
+
+.         drop if cohsize>60
+(864 observations deleted)
+
+.         drop if cohsize<20
+(129 observations deleted)
+
+.         reg avgscore classize above40
+
+      Source |       SS           df       MS      Number of obs   =     1,351
+-------------+----------------------------------   F(2, 1348)      =     14.84
+       Model |  2350.42254         2  1175.21127   Prob > F        =    0.0000
+    Residual |  106748.386     1,348  79.1901971   R-squared       =    0.0215
+-------------+----------------------------------   Adj R-squared   =    0.0201
+       Total |  109098.808     1,350  80.8139321   Root MSE        =    8.8989
+
+------------------------------------------------------------------------------
+    avgscore | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    classize |    .199403   .0488025     4.09   0.000     .1036659    .2951401
+     above40 |   2.086282   .5139474     4.06   0.000     1.078058    3.094505
+       _cons |    62.0787   1.363152    45.54   0.000     59.40457    64.75283
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve
+
+.         drop if cohsize>70
+(422 observations deleted)
+
+.         drop if cohsize<10
+(7 observations deleted)
+
+.         reg avgscore classize above40
+
+      Source |       SS           df       MS      Number of obs   =     1,912
+-------------+----------------------------------   F(2, 1909)      =     13.83
+       Model |  2106.14741         2  1053.07371   Prob > F        =    0.0000
+    Residual |  145316.227     1,909  76.1216484   R-squared       =    0.0143
+-------------+----------------------------------   Adj R-squared   =    0.0133
+       Total |  147422.374     1,911  77.1440995   Root MSE        =    8.7248
+
+------------------------------------------------------------------------------
+    avgscore | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    classize |   .1153169   .0350731     3.29   0.001     .0465313    .1841025
+     above40 |   1.436619   .4463135     3.22   0.001      .561306    2.311933
+       _cons |   65.21038   .9293286    70.17   0.000     63.38777    67.03298
+------------------------------------------------------------------------------
+
+.         restore
+
+.         
+.         /*
+>         There's definitely a statistically significant impact of class size on test scores. The improvement
+>         in performance from the threshold class size drop is pretty large, as is the impact of class size alone.
+>         Both are statistically significant. Impact of class size is actually bigger in the RD model. Project STAR 
+>         seems a lot more difficult to implement on a large scale than the M rule - it still has valid and relevant
+>         results, but I'm a lot more optimistic about the implementation of these findings.
+>         */
+.         
+.         * i)
+.         
+.         *group our center40 variable into bins of 2 (e.g., center40=0 and center40=1 will now both equal zero).
+.         g center40_2 = floor(center40/2)*2
+
+.         *keep only observations with center40 between -20 and 20
+.         keep if abs(center40)<=20
+(993 observations deleted)
+
+.         *take the mean of test scores and class size by our grouped bins
+.         collapse (mean) classize avgscore, by(center40_2)
+
+.         *create a scatter plot and fit a line on both sides of the cutoff.
+.         scatter avgscore center40_2, ylabel(40(5)80) || ///
+>         lfit avgscore center40_2 if center40_2<0 || ///
+>         lfit avgscore center40_2 if center40_2>=0
+
+.         *create a scatter plot and fit a line on both sides of the cutoff.
+.         scatter classize center40_2, ylabel(10(5)40) || ///
+>         lfit classize center40_2 if center40_2<0 || ///
+>         lfit classize center40_2 if center40_2>=0
+
+.         
+.         /*
+>         Well, now I know I did most of d) wrong but I'm not certain how to correct it with the time I have left before additional penalties beyond 24hrs set in. I'll review o
+> n an ongoing basis. 
+>         
+>         The discontinuity in the second graph is about 10, and in the first is just under 5. I know this because it should mirror the discontinuities from the models in h)
+>         */
+. 
+end of do-file
+
+. exit, clear
