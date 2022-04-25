@@ -1,0 +1,212 @@
+--------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\condo\OneDrive\Documents\School\ECO 348K\ECO-348K-psets\pset5\pset5_log.log
+  log type:  text
+ opened on:  11 Apr 2022, 21:41:01
+
+. 
+. *** Q1
+.         
+.         use "$pset5\LotteryExample.dta", clear
+
+.         
+.         * a)
+.         
+.         * see accompanying PDF
+.         
+.         * b)
+.         
+.         * see accompanying PDF
+.         
+.         * c)
+.         
+.         reg test_score attends
+
+      Source |       SS           df       MS      Number of obs   =   100,000
+-------------+----------------------------------   F(1, 99998)     =  20287.96
+       Model |  2704835.15         1  2704835.15   Prob > F        =    0.0000
+    Residual |  13331954.8    99,998  133.322214   R-squared       =    0.1687
+-------------+----------------------------------   Adj R-squared   =    0.1687
+       Total |    16036790    99,999  160.369503   Root MSE        =    11.547
+
+------------------------------------------------------------------------------
+  test_score | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     attends |   10.43731   .0732773   142.44   0.000     10.29368    10.58093
+       _cons |   61.73811   .0496277  1244.03   0.000     61.64084    61.83538
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         The omitted variable bias for attends is positive. Based on the generation function you'd expect a coefficient o
+> f
+>         5, but the regression returns a coefficient of 10.
+>         */
+.         
+.         * d)
+.         
+.         reg test_score attends ability parent_income
+
+      Source |       SS           df       MS      Number of obs   =   100,000
+-------------+----------------------------------   F(3, 99996)     =  20913.01
+       Model |  6182643.08         3  2060881.03   Prob > F        =    0.0000
+    Residual |  9854146.87    99,996  98.5454106   R-squared       =    0.3855
+-------------+----------------------------------   Adj R-squared   =    0.3855
+       Total |    16036790    99,999  160.369503   Root MSE        =     9.927
+
+-------------------------------------------------------------------------------
+   test_score | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+--------------+----------------------------------------------------------------
+      attends |   4.992794   .0693501    71.99   0.000     4.856869    5.128719
+      ability |    19.9609    .117294   170.18   0.000       19.731    20.19079
+parent_income |   .0001223   1.32e-06    92.49   0.000     .0001197    .0001249
+        _cons |   50.11858   .0765381   654.82   0.000     49.96856    50.26859
+-------------------------------------------------------------------------------
+
+.         
+.         /*
+>         These coefficients match up almost perfectly to the coefficients in the formula. The true values fall within the
+>  
+>         confidence interval of the coefficients for all three variables.
+>         */
+.         
+.         * e)
+.         
+.         * see accompanying PDF
+.         
+.         * f) 
+.         
+.         ivregress 2sls test_score (attends = lottery), r
+
+Instrumental variables 2SLS regression            Number of obs   =    100,000
+                                                  Wald chi2(1)    =    1607.89
+                                                  Prob > chi2     =     0.0000
+                                                  R-squared       =     0.1219
+                                                  Root MSE        =     11.867
+
+------------------------------------------------------------------------------
+             |               Robust
+  test_score | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     attends |   4.943314   .1232791    40.10   0.000     4.701691    5.184936
+       _cons |    64.2581   .0678759   946.70   0.000     64.12506    64.39113
+------------------------------------------------------------------------------
+Instrumented: attends
+ Instruments: lottery
+
+.         
+.         /*
+>         It's the same effect size as the true effect of attendance!
+>         */
+.         
+.         * g) 
+.         
+.         * first stage
+.         
+.         reg attends lottery
+
+      Source |       SS           df       MS      Number of obs   =   100,000
+-------------+----------------------------------   F(1, 99998)     =  59499.78
+       Model |  9262.42289         1  9262.42289   Prob > F        =    0.0000
+    Residual |  15566.8429    99,998  .155671542   R-squared       =    0.3730
+-------------+----------------------------------   Adj R-squared   =    0.3730
+       Total |  24829.2658    99,999  .248295141   Root MSE        =    .39455
+
+------------------------------------------------------------------------------
+     attends | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     lottery |   .6643447   .0027236   243.93   0.000     .6590065    .6696828
+       _cons |   .2596025   .0014909   174.12   0.000     .2566803    .2625246
+------------------------------------------------------------------------------
+
+.         
+.         * reduced form
+.         
+.         reg test_score lottery
+
+      Source |       SS           df       MS      Number of obs   =   100,000
+-------------+----------------------------------   F(1, 99998)     =   1431.55
+       Model |  226339.794         1  226339.794   Prob > F        =    0.0000
+    Residual |  15810450.2    99,998  158.107664   R-squared       =    0.0141
+-------------+----------------------------------   Adj R-squared   =    0.0141
+       Total |    16036790    99,999  160.369503   Root MSE        =    12.574
+
+------------------------------------------------------------------------------
+  test_score | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     lottery |   3.284064   .0867976    37.84   0.000     3.113942    3.454186
+       _cons |   65.54139    .047514  1379.41   0.000     65.44827    65.63452
+------------------------------------------------------------------------------
+
+.         
+.         /* 
+>         Lottery win increases attendance likelihood by 66%, which conveniently is the percentage of the variation in
+>         test_score previously accounted for by attends that appears in the reduced form regression.
+>         */
+.         
+.         * h)
+.         
+.         /*
+>         Assuming no defiers, LATE is the effect of lottery on test_score measured by the 2sls regression from f)
+>         
+>         Compliers are people who would not have attended a charter school had they not won the lottery
+>         
+>         Deniers are people who will refuse to attend should they win the lottery, but may attend otherwise. 
+>         DNE under monotonicity assumption. 
+>         
+>         Always-takers are people who would attend regardless of lottery status. 
+>         
+>         Never-takers are people who would not attend regardless of lottery status. 
+>         */
+.         
+. *** Q2
+. 
+.         * a)
+.         
+.         /*
+>         Zimmerman uses the presence of a grade threshold for admissions eligibility to instrument for college 
+>         attendance. 
+>         
+>         Zimmerman chooses the least prestigious school in the University of Florida system to satisfy the monotonicity
+>         assumption, since it can be assumed that if students don't meet the requirements for the most lenient school 
+>         they will not be declining to attend in favor of a better offer. 
+>         
+>         Zimmerman assumes grades affect income only through their determination of attendance status, theoretically
+>         satisfying the exclusion restriction assumption. 
+>         
+>         Zimmerman also assumes that parent income, ability, etc are continuous through the cutoff. 
+>         */
+.         
+.         * b)
+.         
+.         /*
+>         Looking for small classrooms' effect on test scores. 
+>         
+>         Random assignment to treatment. 
+>         
+>         IV instrument is intended treatment
+>         
+>         first stage:
+>         reg test_score small_class
+>         
+>         reduced:
+>         reg test_score assignment
+>         
+>         2sls:
+>         ivregress 2sls test_score (small_class = assignment), r
+>         
+>         Assumptions:
+>         assignment only affects test_score through variation in small_class (exclusive restriction)
+>         satisfied since assignment is randomly assigned
+>         
+>         where assignment occurs it moves small_class in one direction only (monotonicity)
+>         Probably satisfied, assignment moves students into smaller classrooms and it's probably the case
+>         that classroom transfers are in the noise floor/not deliberate and widespread
+>         
+>         assignment is unaffected by endogenous variables in the model
+>         satisfied since assignment is exogenous and random
+>         */
+. 
+end of do-file
+
+. exit, clear
