@@ -1,0 +1,789 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\condo\OneDrive\Documents\School\ECO 348K\ECO-348K-psets\pset6\pset6_log.log
+  log type:  text
+ opened on:  25 Apr 2022, 23:53:24
+
+. 
+. *** Q1
+.         
+.         use "$pset6\BraceroData.dta", clear
+
+.         
+.         * a)
+.         
+.         gen post = 1 if year >= 1962
+(336 missing values generated)
+
+.         replace post = 0 if post == .
+(336 real changes made)
+
+.         
+.         preserve
+
+.         drop if post == 1
+(528 observations deleted)
+
+.         drop if treated == 1
+(98 observations deleted)
+
+.         mean(yearly_mex_frac)
+
+Mean estimation                               Number of obs = 236
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+yearly_mex_frac |   .0156016   .0021253      .0114144    .0197887
+-----------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve
+
+.         drop if post == 0
+(336 observations deleted)
+
+.         drop if treated == 1
+(154 observations deleted)
+
+.         mean(yearly_mex_frac)
+
+Mean estimation                               Number of obs = 371
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+yearly_mex_frac |    .001841   .0005013      .0008553    .0028267
+-----------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve
+
+.         drop if post == 1
+(528 observations deleted)
+
+.         drop if treated == 0
+(238 observations deleted)
+
+.         mean(yearly_mex_frac)
+
+Mean estimation                                Number of obs = 90
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+yearly_mex_frac |   .3347968   .0222559      .2905747    .3790188
+-----------------------------------------------------------------
+
+.         restore
+
+.         
+.         preserve
+
+.         drop if post == 0
+(336 observations deleted)
+
+.         drop if treated == 0
+(374 observations deleted)
+
+.         mean(yearly_mex_frac)
+
+Mean estimation                               Number of obs = 136
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+yearly_mex_frac |    .072632   .0118078      .0492799    .0959842
+-----------------------------------------------------------------
+
+.         restore
+
+.         
+.         /*
+>         post = 0, treated = 0: .0156
+>         post = 1, treated = 0: .001841
+>         post = 0, treated = 1: .3347968
+>         post = 1, treated = 1: .072632
+>         
+>         In the treated states, the termination of the bracero program decreased yearly_mex_frac by .2483
+>         */
+.         
+.         * b) 
+.         
+.         reg yearly_mex_frac post##treated, cluster(year)
+
+Linear regression                               Number of obs     =        833
+                                                F(3, 17)          =     374.99
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.5551
+                                                Root MSE          =     .09065
+
+                                  (Std. err. adjusted for 18 clusters in year)
+------------------------------------------------------------------------------
+             |               Robust
+yearly_mex~c | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |  -.0137606   .0020004    -6.88   0.000    -.0179812   -.0095401
+   1.treated |   .3191952    .010184    31.34   0.000     .2977088    .3406817
+             |
+post#treated |
+        1 1  |  -.2484041     .03615    -6.87   0.000     -.324674   -.1721342
+             |
+       _cons |   .0156016   .0017666     8.83   0.000     .0118743    .0193288
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         The estimate for post##treated is the same as the one from the 2x2 comparison. 
+>         */
+.         
+.         * c)
+.         
+.         binscatter yearly_mex_frac year, xline(1962) xline(1965) discrete by(treated)
+
+.         
+.         * d) 
+.         
+.         areg yearly_mex_frac post##treated ib1961.year##treated, a(year)
+note: 1.post omitted because of collinearity.
+note: 1955.year omitted because of collinearity.
+note: 1956.year omitted because of collinearity.
+note: 1957.year omitted because of collinearity.
+note: 1958.year omitted because of collinearity.
+note: 1959.year omitted because of collinearity.
+note: 1960.year omitted because of collinearity.
+note: 1962.year omitted because of collinearity.
+note: 1963.year omitted because of collinearity.
+note: 1964.year omitted because of collinearity.
+note: 1965.year omitted because of collinearity.
+note: 1966.year omitted because of collinearity.
+note: 1967.year omitted because of collinearity.
+note: 1968.year omitted because of collinearity.
+note: 1969.year omitted because of collinearity.
+note: 1970.year omitted because of collinearity.
+note: 1971.year omitted because of collinearity.
+note: 1972.year omitted because of collinearity.
+note: 1972.year#1.treated omitted because of collinearity.
+
+Linear regression, absorbing indicators             Number of obs     =    833
+Absorbed variable: year                             No. of categories =     18
+                                                    F(18, 797)        =  73.13
+                                                    Prob > F          = 0.0000
+                                                    R-squared         = 0.6709
+                                                    Adj R-squared     = 0.6564
+                                                    Root MSE          = 0.0795
+
+------------------------------------------------------------------------------
+yearly_mex~c | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |          0  (omitted)
+   1.treated |   .2961671   .0260398    11.37   0.000     .2450525    .3472818
+             |
+post#treated |
+        1 1  |  -.2961671   .0397282    -7.45   0.000    -.3741513   -.2181829
+             |
+        year |
+       1955  |          0  (omitted)
+       1956  |          0  (omitted)
+       1957  |          0  (omitted)
+       1958  |          0  (omitted)
+       1959  |          0  (omitted)
+       1960  |          0  (omitted)
+       1962  |          0  (omitted)
+       1963  |          0  (omitted)
+       1964  |          0  (omitted)
+       1965  |          0  (omitted)
+       1966  |          0  (omitted)
+       1967  |          0  (omitted)
+       1968  |          0  (omitted)
+       1969  |          0  (omitted)
+       1970  |          0  (omitted)
+       1971  |          0  (omitted)
+       1972  |          0  (omitted)
+             |
+year#treated |
+     1955 1  |   .0591794   .0372967     1.59   0.113    -.0140319    .1323908
+     1956 1  |   .0533457   .0367492     1.45   0.147     -.018791    .1254825
+     1957 1  |   .0385358   .0367492     1.05   0.295    -.0336009    .1106725
+     1958 1  |   .0255063   .0367492     0.69   0.488    -.0466304     .097643
+     1959 1  |  -.0002376   .0367492    -0.01   0.995    -.0723743    .0718992
+     1960 1  |  -.0129184   .0368258    -0.35   0.726    -.0852055    .0593687
+     1962 1  |   .2877266   .0397282     7.24   0.000     .2097424    .3657108
+     1963 1  |   .2266271   .0392166     5.78   0.000      .149647    .3036072
+     1964 1  |   .1948897   .0396572     4.91   0.000     .1170449    .2727345
+     1965 1  |   .0057214   .0392166     0.15   0.884    -.0712587    .0827015
+     1966 1  |    .003319   .0396572     0.08   0.933    -.0745258    .0811638
+     1967 1  |   .0029126   .0396572     0.07   0.941    -.0749322    .0807575
+     1968 1  |   2.12e-17    .040757     0.00   1.000    -.0800038    .0800038
+     1969 1  |   1.19e-16   .0396572     0.00   1.000    -.0778448    .0778448
+     1970 1  |   5.22e-17    .040165     0.00   1.000    -.0788417    .0788417
+     1971 1  |   2.12e-17    .040757     0.00   1.000    -.0800038    .0800038
+     1972 1  |          0  (omitted)
+             |
+       _cons |   .0072587   .0032286     2.25   0.025     .0009212    .0135963
+------------------------------------------------------------------------------
+F test of absorbed indicators: F(17, 797) = 0.330             Prob > F = 0.995
+
+.         
+.         coefplot ,vertical keep(*.year#1.treated) omit base rename(*.year#1.treated="") ///
+>         xlabel(,angle(45)) nolabels color(black) plotregion(color(white)) graphregion(color(white)) ///
+>         ytitle("Mexican Fraction of Seasonal Workers") xtitle("Year") xline(8 11, lpattern(dash)) ///
+>         level(95) ylabel(-0.6(.2)0.6) yscale(r(-.6,.6))
+
+.         
+.         * e) 
+.         
+.         /*
+>         Based on the coefficients from d), it doesn't look like any of the years prior to 1962 for the treated group 
+>         differed from zero statistically. Between 1962 and 1965, the coefficients in the treated group become positive 
+>         then return to statistical zero following the 1965 cancellation of the program. 
+>         
+>         Together with the mostly flat pre-treatment results from the graph in c), it looks like the relative proportion 
+>         of Mexican workers used in agriculture doesn't change substantially prior to the treatment.  Thus, the parallel
+>         trends assumption holds. 
+>         */
+.         
+.         * f)
+.         
+.         * for realwage_hourly
+.         
+.                 * a)
+.                 
+.                 preserve
+
+.                 drop if post == 1
+(528 observations deleted)
+
+.                 drop if treated == 1
+(98 observations deleted)
+
+.                 mean(realwage_hourly)
+
+Mean estimation                               Number of obs = 238
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+realwage_hourly |   .8490163   .0136447      .8221359    .8758967
+-----------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 preserve
+
+.                 drop if post == 0
+(336 observations deleted)
+
+.                 drop if treated == 1
+(154 observations deleted)
+
+.                 mean(realwage_hourly)
+
+Mean estimation                               Number of obs = 340
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+realwage_hourly |   .9785149   .0114366      .9560191    1.001011
+-----------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 preserve
+
+.                 drop if post == 1
+(528 observations deleted)
+
+.                 drop if treated == 0
+(238 observations deleted)
+
+.                 mean(realwage_hourly)
+
+Mean estimation                                Number of obs = 98
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+realwage_hourly |   .9303454   .0150621      .9004513    .9602396
+-----------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 preserve
+
+.                 drop if post == 0
+(336 observations deleted)
+
+.                 drop if treated == 0
+(374 observations deleted)
+
+.                 mean(realwage_hourly)
+
+Mean estimation                               Number of obs = 140
+
+-----------------------------------------------------------------
+                |       Mean   Std. err.     [95% conf. interval]
+----------------+------------------------------------------------
+realwage_hourly |   1.064346   .0136897      1.037279    1.091413
+-----------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 /*
+>                 post = 0, treated = 0: .8490163
+>                 post = 1, treated = 0: .9785149
+>                 post = 0, treated = 1: .9303454
+>                 post = 1, treated = 1: 1.064346
+>         
+>                 In the treated states, the termination of the bracero program increased wages by .005
+>         
+>                 This appears to fall inside the noise floor of the standard errors of the means I generated.
+>                 */
+.         
+.                 * b)
+.                 
+.                 reg realwage_hourly post##treated, cluster(year)
+
+Linear regression                               Number of obs     =        816
+                                                F(3, 16)          =    1919.70
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1272
+                                                Root MSE          =     .19659
+
+                                  (Std. err. adjusted for 17 clusters in year)
+------------------------------------------------------------------------------
+             |               Robust
+realwage_h~y | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |   .1294986   .0247958     5.22   0.000     .0769338    .1820633
+   1.treated |   .0813291   .0020209    40.24   0.000      .077045    .0856132
+             |
+post#treated |
+        1 1  |   .0045019   .0038712     1.16   0.262    -.0037047    .0127086
+             |
+       _cons |   .8490163   .0045625   186.09   0.000     .8393443    .8586884
+------------------------------------------------------------------------------
+
+.                 
+.                 /*
+>                 The estimate for post##treated is the same as the one from the 2x2 comparison. At 95% confidence
+>                 the coefficient is a statistical zero.
+>                 */
+.                 
+.                 * c) 
+.                 
+.                 binscatter realwage_hourly year, xline(1962) xline(1965) discrete by(treated)
+
+.                 
+.                 * d) 
+.                 
+.                 areg realwage_hourly post##treated ib1961.year##treated, a(year)
+note: 1.post omitted because of collinearity.
+note: 1955.year omitted because of collinearity.
+note: 1956.year omitted because of collinearity.
+note: 1957.year omitted because of collinearity.
+note: 1958.year omitted because of collinearity.
+note: 1959.year omitted because of collinearity.
+note: 1960.year omitted because of collinearity.
+note: 1962.year omitted because of collinearity.
+note: 1963.year omitted because of collinearity.
+note: 1964.year omitted because of collinearity.
+note: 1965.year omitted because of collinearity.
+note: 1966.year omitted because of collinearity.
+note: 1967.year omitted because of collinearity.
+note: 1968.year omitted because of collinearity.
+note: 1969.year omitted because of collinearity.
+note: 1970.year omitted because of collinearity.
+note: 1971.year omitted because of collinearity.
+note: 1971.year#1.treated omitted because of collinearity.
+
+Linear regression, absorbing indicators             Number of obs     =    816
+Absorbed variable: year                             No. of categories =     17
+                                                    F(17, 782)        =   1.92
+                                                    Prob > F          = 0.0140
+                                                    R-squared         = 0.1983
+                                                    Adj R-squared     = 0.1645
+                                                    Root MSE          = 0.1920
+
+------------------------------------------------------------------------------
+realwage_h~y | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |          0  (omitted)
+   1.treated |   .0888295   .0609641     1.46   0.145    -.0308431    .2085021
+             |
+post#treated |
+        1 1  |  -.0012358   .0862162    -0.01   0.989    -.1704784    .1680068
+             |
+        year |
+       1955  |          0  (omitted)
+       1956  |          0  (omitted)
+       1957  |          0  (omitted)
+       1958  |          0  (omitted)
+       1959  |          0  (omitted)
+       1960  |          0  (omitted)
+       1962  |          0  (omitted)
+       1963  |          0  (omitted)
+       1964  |          0  (omitted)
+       1965  |          0  (omitted)
+       1966  |          0  (omitted)
+       1967  |          0  (omitted)
+       1968  |          0  (omitted)
+       1969  |          0  (omitted)
+       1970  |          0  (omitted)
+       1971  |          0  (omitted)
+             |
+year#treated |
+     1955 1  |  -.0088422   .0862162    -0.10   0.918    -.1780848    .1604004
+     1956 1  |  -.0103325   .0862162    -0.12   0.905    -.1795751    .1589102
+     1957 1  |  -.0126538   .0862162    -0.15   0.883    -.1818964    .1565888
+     1958 1  |  -.0145096   .0862162    -0.17   0.866    -.1837522     .154733
+     1959 1  |  -.0049328   .0862162    -0.06   0.954    -.1741755    .1643098
+     1960 1  |  -.0012316   .0862162    -0.01   0.989    -.1704742     .168011
+     1962 1  |   .0130167   .0862162     0.15   0.880    -.1562259    .1822594
+     1963 1  |   .0088229   .0862162     0.10   0.919    -.1604198    .1780655
+     1964 1  |   .0041384   .0862162     0.05   0.962    -.1651042    .1733811
+     1965 1  |   .0067631   .0862162     0.08   0.937    -.1624795    .1760057
+     1966 1  |   .0012407   .0862162     0.01   0.989    -.1680019    .1704834
+     1967 1  |  -.0099482   .0862162    -0.12   0.908    -.1791908    .1592944
+     1968 1  |  -.0098476   .0862162    -0.11   0.909    -.1790902     .159395
+     1969 1  |  -.0203655   .0862162    -0.24   0.813    -.1896081    .1488772
+     1970 1  |  -.0114468   .0862162    -0.13   0.894    -.1806894    .1577958
+     1971 1  |          0  (omitted)
+             |
+       _cons |   .9251919   .0079853   115.86   0.000     .9095167    .9408672
+------------------------------------------------------------------------------
+F test of absorbed indicators: F(16, 782) = 7.248             Prob > F = 0.000
+
+.         
+.                 coefplot ,vertical keep(*.year#1.treated) omit base rename(*.year#1.treated="") ///
+>                 xlabel(,angle(45)) nolabels color(black) plotregion(color(white)) graphregion(color(white)) ///
+>                 ytitle("Real Hourly Wages") xtitle("Year") xline(8 11, lpattern(dash)) ///
+>                 level(95) ylabel(-0.6(.2)0.6) yscale(r(-.6,.6))
+
+.                 
+.                 * e)
+.                 
+.                 /*
+>                 The change in real wages before and after the termination of the braceros program appears to 
+>                 be a statistical zero. The trend lines are identical for the graph in c), and the coefficient
+>                 graph generated in d) is flat as a board. 
+>                 
+>                 The parallel trends assumption holds.
+>                 */
+.                 
+.         * for domestic_seasonal
+.         
+.                 * a)
+.                 
+.                 preserve
+
+.                 drop if post == 1
+(528 observations deleted)
+
+.                 drop if treated == 1
+(98 observations deleted)
+
+.                 mean(domestic_seasonal)
+
+Mean estimation                                 Number of obs = 238
+
+-------------------------------------------------------------------
+                  |       Mean   Std. err.     [95% conf. interval]
+------------------+------------------------------------------------
+domestic_seasonal |   25049.42   1257.328      22572.45    27526.39
+-------------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 preserve
+
+.                 drop if post == 0
+(336 observations deleted)
+
+.                 drop if treated == 1
+(154 observations deleted)
+
+.                 mean(domestic_seasonal)
+
+Mean estimation                                 Number of obs = 374
+
+-------------------------------------------------------------------
+                  |       Mean   Std. err.     [95% conf. interval]
+------------------+------------------------------------------------
+domestic_seasonal |    24833.1   1727.037      21437.15    28229.05
+-------------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 preserve
+
+.                 drop if post == 1
+(528 observations deleted)
+
+.                 drop if treated == 0
+(238 observations deleted)
+
+.                 mean(domestic_seasonal)
+
+Mean estimation                                  Number of obs = 98
+
+-------------------------------------------------------------------
+                  |       Mean   Std. err.     [95% conf. interval]
+------------------+------------------------------------------------
+domestic_seasonal |    43726.5   6777.995      30274.06    57178.94
+-------------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 preserve
+
+.                 drop if post == 0
+(336 observations deleted)
+
+.                 drop if treated == 0
+(374 observations deleted)
+
+.                 mean(domestic_seasonal)
+
+Mean estimation                                 Number of obs = 154
+
+-------------------------------------------------------------------
+                  |       Mean   Std. err.     [95% conf. interval]
+------------------+------------------------------------------------
+domestic_seasonal |   32695.52   4372.055      24058.13    41332.91
+-------------------------------------------------------------------
+
+.                 restore
+
+.         
+.                 /*
+>                 post = 0, treated = 0: 25049.42
+>                 post = 1, treated = 0: 24833.1 
+>                 post = 0, treated = 1: 43726.5
+>                 post = 1, treated = 1: 32695.52
+>         
+>                 In the treated states, the termination of the bracero program decreased domestic seasonal workers
+>                 by 10,814.
+>                 */
+.         
+.                 * b)
+.                 
+.                 reg domestic_seasonal post##treated, cluster(year)
+
+Linear regression                               Number of obs     =        864
+                                                F(3, 17)          =     166.14
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0234
+                                                Root MSE          =      40237
+
+                                  (Std. err. adjusted for 18 clusters in year)
+------------------------------------------------------------------------------
+             |               Robust
+domestic_s~l | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |  -216.3212   918.8164    -0.24   0.817    -2154.854    1722.212
+   1.treated |   18677.08   1086.388    17.19   0.000        16385    20969.16
+             |
+post#treated |
+        1 1  |  -10814.66   1254.981    -8.62   0.000    -13462.44   -8166.881
+             |
+       _cons |   25049.42   428.1961    58.50   0.000     24146.01    25952.83
+------------------------------------------------------------------------------
+
+.                 
+.                 /*
+>                 The estimate for post##treated is the same as the one from the 2x2 comparison. 
+>                 */
+.                 
+.                 * c) 
+.                 
+.                 binscatter domestic_seasonal year, xline(1962) xline(1965) discrete by(treated)
+
+.                 
+.                 * d) 
+.                 
+.                 areg domestic_seasonal post##treated ib1961.year##treated, a(year)
+note: 1.post omitted because of collinearity.
+note: 1955.year omitted because of collinearity.
+note: 1956.year omitted because of collinearity.
+note: 1957.year omitted because of collinearity.
+note: 1958.year omitted because of collinearity.
+note: 1959.year omitted because of collinearity.
+note: 1960.year omitted because of collinearity.
+note: 1962.year omitted because of collinearity.
+note: 1963.year omitted because of collinearity.
+note: 1964.year omitted because of collinearity.
+note: 1965.year omitted because of collinearity.
+note: 1966.year omitted because of collinearity.
+note: 1967.year omitted because of collinearity.
+note: 1968.year omitted because of collinearity.
+note: 1969.year omitted because of collinearity.
+note: 1970.year omitted because of collinearity.
+note: 1971.year omitted because of collinearity.
+note: 1972.year omitted because of collinearity.
+note: 1972.year#1.treated omitted because of collinearity.
+
+Linear regression, absorbing indicators         Number of obs     =        864
+Absorbed variable: year                         No. of categories =         18
+                                                F(18, 828)        =       1.06
+                                                Prob > F          =     0.3900
+                                                R-squared         =     0.0269
+                                                Adj R-squared     =    -0.0143
+                                                Root MSE          = 40933.4325
+
+------------------------------------------------------------------------------
+domestic_s~l | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |          0  (omitted)
+   1.treated |   14670.95   12998.56     1.13   0.259    -10843.06    40184.95
+             |
+post#treated |
+        1 1  |  -9268.416   18382.74    -0.50   0.614    -45350.67    26813.84
+             |
+        year |
+       1955  |          0  (omitted)
+       1956  |          0  (omitted)
+       1957  |          0  (omitted)
+       1958  |          0  (omitted)
+       1959  |          0  (omitted)
+       1960  |          0  (omitted)
+       1962  |          0  (omitted)
+       1963  |          0  (omitted)
+       1964  |          0  (omitted)
+       1965  |          0  (omitted)
+       1966  |          0  (omitted)
+       1967  |          0  (omitted)
+       1968  |          0  (omitted)
+       1969  |          0  (omitted)
+       1970  |          0  (omitted)
+       1971  |          0  (omitted)
+       1972  |          0  (omitted)
+             |
+year#treated |
+     1955 1  |   6278.126   18382.74     0.34   0.733    -29804.13    42360.38
+     1956 1  |   8191.416   18382.74     0.45   0.656    -27890.84    44273.67
+     1957 1  |   5262.718   18382.74     0.29   0.775    -30819.54    41344.98
+     1958 1  |   3704.525   18382.74     0.20   0.840    -32377.73    39786.78
+     1959 1  |   4331.697   18382.74     0.24   0.814    -31750.56    40413.95
+     1960 1  |    274.458   18382.74     0.01   0.988     -35807.8    36356.71
+     1962 1  |   6733.059   18382.74     0.37   0.714     -29349.2    42815.32
+     1963 1  |   2106.105   18382.74     0.11   0.909    -33976.15    38188.36
+     1964 1  |  -54.77311   18382.74    -0.00   0.998    -36137.03    36027.48
+     1965 1  |   677.1597   18382.74     0.04   0.971     -35405.1    36759.42
+     1966 1  |   3273.059   18382.74     0.18   0.859     -32809.2    39355.32
+     1967 1  |   3843.227   18382.74     0.21   0.834    -32239.03    39925.48
+     1968 1  |   3235.908   18382.74     0.18   0.860    -32846.35    39318.16
+     1969 1  |   4328.777   18382.74     0.24   0.814    -31753.48    40411.03
+     1970 1  |   2539.387   18382.74     0.14   0.890    -33542.87    38621.64
+     1971 1  |    376.895   18382.74     0.02   0.984    -35705.36    36459.15
+     1972 1  |          0  (omitted)
+             |
+       _cons |   24917.22   1654.636    15.06   0.000     21669.45       28165
+------------------------------------------------------------------------------
+F test of absorbed indicators: F(17, 828) = 0.100             Prob > F = 1.000
+
+.         
+.                 coefplot ,vertical keep(*.year#1.treated) omit base rename(*.year#1.treated="") ///
+>                 xlabel(,angle(45)) nolabels color(black) plotregion(color(white)) graphregion(color(white)) ///
+>                 ytitle("Total Domestic Seasonal Workers") xtitle("Year") xline(8 11, lpattern(dash)) ///
+>                 level(95) ylabel(-0.6(.2)0.6) yscale(r(-.6,.6))
+
+.                 
+.                 * e)
+.                 
+.                 /*
+>                 The coefficients in the pre-1962 period among the treated are again not statistically different 
+>                 from zero. However, domestic migrant laborer numbers exhibit a trend of decline in both treated 
+>                 and untreated groups prior to treatment. This trend remains unchanged during treatment, but the
+>                 trends are different prior to treatment. 
+>                 
+>                 The parallel trends assumption does not hold.
+>                 */
+.                 
+.         /*
+>         The repeal of the braceros program does not appear to have achieved the stated goal of improving wages
+>         and domestic employment for seasonal workers in the United States. Looks like the Mexican agriculture 
+>         workers lost, and the American agricultural workers didn't win.
+>         */
+.         
+.         reg tomatoes_total post##treated, cluster(year)
+
+Linear regression                               Number of obs     =        768
+                                                F(3, 15)          =     272.75
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0357
+                                                Root MSE          =     4.7e+05
+
+                                  (Std. err. adjusted for 16 clusters in year)
+------------------------------------------------------------------------------
+             |               Robust
+tomatoes_t~l | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |   5618.363   3392.023     1.66   0.118    -1611.563    12848.29
+   1.treated |   155881.4   7237.614    21.54   0.000     140454.8      171308
+             |
+post#treated |
+        1 1  |   64588.55   17649.43     3.66   0.002     26969.69    102207.4
+             |
+       _cons |   58039.16   2613.412    22.21   0.000      52468.8    63609.51
+------------------------------------------------------------------------------
+
+.         
+.         reg asparagus_total post##treated, cluster(year)
+
+Linear regression                               Number of obs     =        768
+                                                F(3, 15)          =    2800.78
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0728
+                                                Root MSE          =      13685
+
+                                  (Std. err. adjusted for 16 clusters in year)
+------------------------------------------------------------------------------
+             |               Robust
+asparagus_~l | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      1.post |   125.5668   28.11502     4.47   0.000       65.641    185.4925
+   1.treated |   9342.437   104.5441    89.36   0.000     9119.606    9565.268
+             |
+post#treated |
+        1 1  |  -1742.852   428.4183    -4.07   0.001    -2656.005   -829.7004
+             |
+       _cons |    1096.42   15.95821    68.71   0.000     1062.406    1130.434
+------------------------------------------------------------------------------
+
+.         
+.         /*
+>         Farms likely replaced labor with capital following the termination of the bracero program. Tomato 
+>         cultivation increased dramatically, and asparagus production decreased. It's possible that mechanization
+>         of farming was also part of the reason that domestic employment of migrant agricultural workers fell prior
+>         to the termination of the braceros program.
+>         */
+.         
+.         * g)
+.         
+.         use "$pset6\Tomatoes.dta", clear
+
+.         
+.         binscatter tomato_mech year, xline(1962) xline(1965) discrete by(state)
+
+.         
+.         /*
+>         Termination of the braceros program correlates with in an immediate and dramatic increase in mechanization
+>         of tomato harvesting, beginning in 1963. Taken together, it appears tomato farmers maximized efficiency by 
+>         substituting capital for labor in the absence of cheap labor from the braceros program. 
+>         */
+. 
+end of do-file
+
+. exit, clear
